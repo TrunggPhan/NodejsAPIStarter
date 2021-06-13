@@ -1,14 +1,24 @@
 const express = require('express')
 const logger = require('morgan')
+const mongoClient = require('mongoose')
+const bodyParser = require('body-parser')
 
 const app = express();
 
+//Connect DB
+mongoClient.connect("mongodb+srv://testdb:testdb@cluster0.sdh97.mongodb.net/NodejsApiStarter?retryWrites=true&w=majority", {
+// mongoClient.connect("mongodb://localhost/nodejsapistarter", {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    }).then(() => { console.log('✅  Ket noi MongoDB thanh cong!!!')}) //nhap emoji macbook (control + command + space)
+      .catch((error) => { console.error('❌  Ket noi MongoDB that bai voi error : ', error) })
+
 //MiddleWare
 app.use(logger('dev'))
-
-const userRoute = require('./routes/user')
+app.use(bodyParser.json())
 
 //Router
+const userRoute = require('./routes/user')
 app.use('/users', userRoute)
 
 //Router
@@ -25,8 +35,10 @@ app.use((req, res,next) => {
     next(err)
 })
 
+
 //Error handle function
 app.use((req, res,next)=> {
+// app.use((err, res)=> {
     const error = app.get('env') === 'development' ? err : {}
     const status = err.status || 500
     //response to client
