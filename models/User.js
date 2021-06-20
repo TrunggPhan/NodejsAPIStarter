@@ -11,10 +11,10 @@ const UserSchema = new Schema({
     email: {
         type: String
     },
-    deck: {
+    decks: [{
         type: Schema.Types.ObjectId,
         ref: 'Deck'
-    }
+    }]
 })
 
 const User = mongoose.model('User', UserSchema)

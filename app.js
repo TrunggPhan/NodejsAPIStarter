@@ -30,15 +30,15 @@ app.get('/', (req, res, next) => {
 
 //Catch 404 and forward them to error handle
 app.use((req, res,next) => {
+    console.log("error1 called")
     const err = new Error('Not Found')
     err.status = 404
     next(err)
 })
 
-
 //Error handle function
-app.use((req, res,next)=> {
-// app.use((err, res)=> {
+app.use((err,req, res, next)=> {
+    console.log("error2 called")
     const error = app.get('env') === 'development' ? err : {}
     const status = err.status || 500
     //response to client
