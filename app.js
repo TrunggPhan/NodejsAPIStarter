@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const logger = require('morgan')
 const mongoClient = require('mongoose')
@@ -19,7 +20,9 @@ app.use(bodyParser.json())
 
 //Router
 const userRoute = require('./routes/user')
+const deckRoute = require('./routes/deck')
 app.use('/users', userRoute)
+app.use('/decks', deckRoute)
 
 //Router
 app.get('/', (req, res, next) => {

@@ -2,9 +2,18 @@ const User = require('../models/User')
 const Deck = require('../models/Deck')
 //Validate data
 const Joi = require('joi')
-// const idSchema = Joi.object().keys({
-//     userId: Joi.string().regex(/^\w{24}$/).required()
-// })
+const JWT = require('jsonwebtoken')
+const config = require('../config/index')
+
+const encodedToken = (userId) => {
+    return JWT.sign({
+        iss: 'Trung',
+        sub: userId,
+        iat: new Date().getTime(),
+        exp: new Date().setDate(new Date().getDate() + 3)
+    }, config.JWT_SECRET)
+}
+
 const idSchema = Joi.object({
     userId: Joi.string().regex(/^\w{24}$/).required()
 })
@@ -79,6 +88,27 @@ const replaceUser = async (req, res, next) => {
     return res.status(200).json({success: true})
 }
 
+const secret = async (req, res, next) => {
+    console.log("secret called")
+}
+
+const signIn = async (req, res, next) => {
+    console.log("signIn called")
+}
+
+const signUp = async (req, res, next) => {
+    const { firstName, lastName, email, password } = req.body;
+    const findEmailExist = await User.findOne({email})
+    if(findEmailExist) return res.status(403).json({error: "This email is existed"})
+    const newUser = new User({firstName, lastName, email, password})
+    await newUser.save();
+    //encode a token
+    const token = encodedToken(newUser._id)
+    //set token in Header
+    res.setHeader('Authorization', token)
+    return res.status(201).json({message: " success!"})
+}
+
 module.exports = {
     index,
     newUser,
@@ -86,5 +116,8 @@ module.exports = {
     getDecksByUser,
     getUser,
     updateUser,
-    replaceUser
+    replaceUser,
+    signIn,
+    signUp,
+    secret
 }
