@@ -18,6 +18,13 @@ const idSchema = Joi.object({
     userId: Joi.string().regex(/^\w{24}$/).required()
 })
 
+const authGoogle = async (req, res, next) => {
+    console.log("authGoogle: ", req.user)
+    const token = encodedToken(req.user._id)
+    res.setHeader('Authorization', token)
+    return res.status(200).json({success: true})
+}
+
 // test unlock secret code - test configs of passport (payload)
 const secret = async (req, res, next) => {
     return res.status(200).json({resources: true})
@@ -114,6 +121,7 @@ const replaceUser = async (req, res, next) => {
 }
 
 module.exports = {
+    authGoogle,
     index,
     newUser,
     newDeck,
